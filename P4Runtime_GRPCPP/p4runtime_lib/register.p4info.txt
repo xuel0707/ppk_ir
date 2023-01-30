@@ -1,0 +1,102 @@
+pkg_info {
+  arch: "v1model"
+}
+tables {
+  preamble {
+    id: 43030458
+    name: "ingress.ipv4_lpm"
+    alias: "ipv4_lpm"
+  }
+  match_fields {
+    id: 1
+    name: "hdr.ipv4.dstAddr"
+    bitwidth: 32
+    match_type: LPM
+  }
+  action_refs {
+    id: 29950497
+  }
+  action_refs {
+    id: 33281717
+  }
+  action_refs {
+    id: 21257015
+  }
+  size: 1024
+}
+tables {
+  preamble {
+    id: 40932185
+    name: "ingress.stateful_forward"
+    alias: "stateful_forward"
+  }
+  match_fields {
+    id: 1
+    name: "meta.mod_result"
+    bitwidth: 8
+    match_type: EXACT
+  }
+  action_refs {
+    id: 26512162
+  }
+  action_refs {
+    id: 21257015
+  }
+  size: 1024
+}
+actions {
+  preamble {
+    id: 21257015
+    name: "NoAction"
+    alias: "NoAction"
+    annotations: "@noWarn(\"unused\")"
+  }
+}
+actions {
+  preamble {
+    id: 33281717
+    name: "ingress.drop"
+    alias: "drop"
+  }
+}
+actions {
+  preamble {
+    id: 29950497
+    name: "ingress.ipv4_static"
+    alias: "ipv4_static"
+  }
+  params {
+    id: 1
+    name: "index"
+    bitwidth: 10
+  }
+}
+actions {
+  preamble {
+    id: 26512162
+    name: "ingress.forward"
+    alias: "forward"
+  }
+  params {
+    id: 1
+    name: "port"
+    bitwidth: 9
+  }
+}
+registers {
+  preamble {
+    id: 379673950
+    name: "ingress.dst_active"
+    alias: "dst_active"
+  }
+  type_spec {
+    bitstring {
+      bit {
+        bitwidth: 8
+      }
+    }
+  }
+  size: 1024
+}
+type_info {
+}

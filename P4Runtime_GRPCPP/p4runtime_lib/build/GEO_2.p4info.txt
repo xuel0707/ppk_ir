@@ -1,0 +1,178 @@
+pkg_info {
+  arch: "v1model"
+}
+tables {
+  preamble {
+    id: 44577078
+    name: "MyIngress.gbc_exact"
+    alias: "gbc_exact"
+  }
+  match_fields {
+    id: 1
+    name: "hdr.gbc.geoAreaPosLat"
+    bitwidth: 32
+    match_type: EXACT
+  }
+  match_fields {
+    id: 2
+    name: "hdr.gbc.geoAreaPosLon"
+    bitwidth: 32
+    match_type: EXACT
+  }
+  match_fields {
+    id: 3
+    name: "hdr.gbc.disa"
+    bitwidth: 16
+    match_type: EXACT
+  }
+  match_fields {
+    id: 4
+    name: "hdr.gbc.disb"
+    bitwidth: 16
+    match_type: EXACT
+  }
+  action_refs {
+    id: 19198950
+  }
+  action_refs {
+    id: 22225235
+  }
+  action_refs {
+    id: 20304617
+  }
+  size: 1024
+}
+tables {
+  preamble {
+    id: 37764408
+    name: "MyIngress.eth_exact"
+    alias: "eth_exact"
+  }
+  match_fields {
+    id: 1
+    name: "standard_metadata.ingress_port"
+    bitwidth: 9
+    match_type: TERNARY
+  }
+  match_fields {
+    id: 2
+    name: "hdr.ethernet.dstAddr"
+    bitwidth: 48
+    match_type: TERNARY
+  }
+  match_fields {
+    id: 3
+    name: "hdr.ethernet.srcAddr"
+    bitwidth: 48
+    match_type: TERNARY
+  }
+  match_fields {
+    id: 4
+    name: "hdr.ethernet.etherType"
+    bitwidth: 16
+    match_type: TERNARY
+  }
+  action_refs {
+    id: 20304617
+  }
+  action_refs {
+    id: 25652968
+  }
+  action_refs {
+    id: 21257015
+    annotations: "@defaultonly"
+    scope: DEFAULT_ONLY
+  }
+  size: 1024
+}
+actions {
+  preamble {
+    id: 21257015
+    name: "NoAction"
+    alias: "NoAction"
+    annotations: "@noWarn(\"unused\")"
+  }
+}
+actions {
+  preamble {
+    id: 22225235
+    name: "MyIngress.unicast"
+    alias: "unicast"
+  }
+  params {
+    id: 1
+    name: "port"
+    bitwidth: 9
+  }
+}
+actions {
+  preamble {
+    id: 20304617
+    name: "MyIngress.fwd2ONOS"
+    alias: "fwd2ONOS"
+  }
+}
+actions {
+  preamble {
+    id: 25652968
+    name: "MyIngress.drop"
+    alias: "MyIngress.drop"
+  }
+}
+actions {
+  preamble {
+    id: 19198950
+    name: "MyIngress.multicast"
+    alias: "multicast"
+  }
+  params {
+    id: 1
+    name: "bitcast"
+    bitwidth: 32
+  }
+}
+actions {
+  preamble {
+    id: 20880156
+    name: "MyEgress.drop"
+    alias: "MyEgress.drop"
+  }
+}
+controller_packet_metadata {
+  preamble {
+    id: 82464467
+    name: "packet_in"
+    alias: "packet_in"
+    annotations: "@controller_header(\"packet_in\")"
+  }
+  metadata {
+    id: 1
+    name: "ingress_port"
+    bitwidth: 9
+  }
+  metadata {
+    id: 2
+    name: "_pad"
+    bitwidth: 7
+  }
+}
+controller_packet_metadata {
+  preamble {
+    id: 68710613
+    name: "packet_out"
+    alias: "packet_out"
+    annotations: "@controller_header(\"packet_out\")"
+  }
+  metadata {
+    id: 1
+    name: "egress_port"
+    bitwidth: 9
+  }
+  metadata {
+    id: 2
+    name: "_pad"
+    bitwidth: 7
+  }
+}
+type_info {
+}

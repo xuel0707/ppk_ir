@@ -1,0 +1,92 @@
+pkg_info {
+  arch: "v1model"
+}
+tables {
+  preamble {
+    id: 47663570
+    name: "MyIngress.dest_guid_exact"
+    alias: "dest_guid_exact"
+  }
+  match_fields {
+    id: 1
+    name: "hdr.mf.dest_guid"
+    bitwidth: 32
+    match_type: EXACT
+  }
+  action_refs {
+    id: 31449610
+  }
+  action_refs {
+    id: 22952082
+  }
+  size: 1024
+}
+actions {
+  preamble {
+    id: 22952082
+    name: "MyIngress.send_to_cpu"
+    alias: "send_to_cpu"
+  }
+}
+actions {
+  preamble {
+    id: 31449610
+    name: "MyIngress.dest_guid_forward"
+    alias: "dest_guid_forward"
+  }
+  params {
+    id: 1
+    name: "nxtHopMac"
+    bitwidth: 48
+  }
+  params {
+    id: 2
+    name: "port"
+    bitwidth: 9
+  }
+}
+actions {
+  preamble {
+    id: 25652968
+    name: "MyIngress.drop"
+    alias: "drop"
+  }
+}
+controller_packet_metadata {
+  preamble {
+    id: 81826293
+    name: "packet_in"
+    alias: "packet_in"
+    annotations: "@controller_header(\"packet_in\")"
+  }
+  metadata {
+    id: 1
+    name: "ingress_port"
+    bitwidth: 9
+  }
+  metadata {
+    id: 2
+    name: "_padding"
+    bitwidth: 7
+  }
+}
+controller_packet_metadata {
+  preamble {
+    id: 76689799
+    name: "packet_out"
+    alias: "packet_out"
+    annotations: "@controller_header(\"packet_out\")"
+  }
+  metadata {
+    id: 1
+    name: "_padding"
+    bitwidth: 7
+  }
+  metadata {
+    id: 2
+    name: "egress_port"
+    bitwidth: 9
+  }
+}
+type_info {
+}

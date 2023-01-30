@@ -1,0 +1,5 @@
+#! /usr/bin/env bash
+# Generated file, modify with care
+
+cd /home/aa/ppk_sw/ppk/p4c/build
+/home/aa/ppk_sw/ppk/p4c/backends/p4test/run-p4-sample.py /home/aa/ppk_sw/ppk/p4c  "$@" /home/aa/ppk_sw/ppk/p4c/testdata/p4_14_samples/action_inline2.p4

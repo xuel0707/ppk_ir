@@ -1,0 +1,23 @@
+{
+    "target":"bmv2",
+    "p4info":"build/new-fenpian-cs-ndsc.p4info.txt",
+    "bmv2_json":"build/new-fenpian-cs-ndsc.json",
+    "table_entries":[
+        {
+            "table":"ingress.fib_table",
+            "match":{
+                "meta.components":4,
+                "meta.c1":["5c:ac","ff:ff"],
+                "meta.c2":["ec:70","ff:ff"],
+                "meta.c3":["95:dd","ff:ff"],
+                "meta.c4":["00:00","00:00"],
+                "meta.name_hash":["00:00","00:00"]
+            },
+            "default_action":false,
+            "action_name":"ingress.set_egr",
+            "action_params":{
+                "egress_spec":1
+            }
+        }
+    ]
+}

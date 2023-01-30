@@ -1,0 +1,19 @@
+{
+    "target":"bmv2",
+    "p4info":"build/multimodal_routing.p4info.txt",
+    "bmv2_json":"build/multimodal_routing.json",
+    "table_entries":[
+        {
+            "table":"geo_ternary",
+            "match":{
+                "hdr.geo.dstAddr":["192.168.30.182","255.255.255.255"]
+            },
+            "default_action":false,
+            "action_name":"geo_forward",
+            "action_params":{
+                "dstAddr":"e4:95:6e:2f:d3:44",
+                "port":1
+            }
+        }
+    ]
+}

@@ -1,0 +1,15 @@
+{
+  "target": "bmv2",
+  "p4info": "build/register-example1.p4info.txt",
+  "bmv2_json": "build/register-example1.json",
+  "register_entries": [
+
+    {
+      "register": "reg1",
+      "data": "10",
+      "index": 0,
+      "": {
+      }
+    }
+  ]
+}

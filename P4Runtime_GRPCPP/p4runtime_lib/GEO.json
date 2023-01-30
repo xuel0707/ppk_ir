@@ -1,0 +1,35 @@
+{
+    "target":"bmv2",
+    "p4info":"build/GEO_2.p4info.txt",
+    "bmv2_json":"build/GEO_2.json",
+    "table_entries":[
+        {
+            "table":"MyIngress.gbc_exact",
+            "match":{
+                "hdr.gbc.geoAreaPosLat":10,
+                "hdr.gbc.geoAreaPosLon":10,
+                "hdr.gbc.disa":65535,
+                "hdr.gbc.disb":0
+            },
+            "default_action":false,
+            "action_name":"MyIngress.multicast",
+            "action_params":{
+                "bitcast":6
+            }
+        },
+        {
+            "table":"MyIngress.gbc_exact",
+            "match":{
+                "hdr.gbc.geoAreaPosLat":15,
+                "hdr.gbc.geoAreaPosLon":15,
+                "hdr.gbc.disa":65535,
+                "hdr.gbc.disb":0
+            },
+            "default_action":false,
+            "action_name":"MyIngress.unicast",
+            "action_params":{
+                "port":3
+            }
+        }
+    ]
+}

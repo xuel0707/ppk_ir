@@ -1,0 +1,18 @@
+"rget": "bmv2",
+   "p4info": "build/l3fwd-wo-chksm-gen.p4info.txt",
+   "bmv2_json": "build/l3fwd-wo-chksm-gen.json",
+     "table_entries": [
+  
+       {
+         "table": "ipv4_lpm_0",
+         "match": {
+          "ipv4.dstAddr": "192.168.30.182"
+        },
+        "action_name": "set_nhop",
+        "action_params": {
+        "port":1
+        }
+      }
+    ]
+  }
+

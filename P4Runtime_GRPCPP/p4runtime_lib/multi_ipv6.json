@@ -1,0 +1,19 @@
+{
+    "target":"bmv2",
+    "p4info":"build/multimodal_routing.p4info.txt",
+    "bmv2_json":"build/multimodal_routing.json",
+    "table_entries":[
+        {
+            "table":"ipv6_exact",
+            "match":{
+                "hdr.ipv6.dstAddr":["fe80:0000:0000:0000:e695:6eff:fe2f:3457"]
+            },
+            "default_action":false,
+            "action_name":"ipv6_forward",
+            "action_params":{
+                "dstAddr":"e4:95:6e:2f:d3:44",
+                "port":1
+            }
+        }
+    ]
+}

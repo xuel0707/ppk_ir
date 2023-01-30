@@ -1,0 +1,19 @@
+{
+    "target":"bmv2",
+    "p4info":"build/multimodal_routing.p4info.txt",
+    "bmv2_json":"build/multimodal_routing.json",
+    "table_entries":[
+        {
+            "table":"ipv4_lpm",
+            "match":{
+                "hdr.ipv4.dstAddr":["192.168.30.182",32]
+            },
+            "default_action":false,
+            "action_name":"ipv4_forward",
+            "action_params":{
+                "dstAddr":"e4:95:6e:2f:d3:44",
+                "port":1
+            }
+        }
+    ]
+}

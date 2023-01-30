@@ -1,0 +1,406 @@
+pkg_info {
+  arch: "v1model"
+}
+tables {
+  preamble {
+    id: 46561621
+    name: "ingress.section_table"
+    alias: "section_table"
+  }
+  match_fields {
+    id: 1
+    name: "meta.hdr_ndnlpfragcount_flag"
+    bitwidth: 1
+    match_type: EXACT
+  }
+  action_refs {
+    id: 23806571
+  }
+  action_refs {
+    id: 19344232
+  }
+  action_refs {
+    id: 21257015
+    annotations: "@defaultonly"
+    scope: DEFAULT_ONLY
+  }
+  size: 2
+}
+tables {
+  preamble {
+    id: 45513058
+    name: "ingress.count_table"
+    alias: "count_table"
+  }
+  match_fields {
+    id: 1
+    name: "meta.hdr_component1_flag"
+    bitwidth: 1
+    match_type: EXACT
+  }
+  match_fields {
+    id: 2
+    name: "meta.hdr_component2_flag"
+    bitwidth: 1
+    match_type: EXACT
+  }
+  match_fields {
+    id: 3
+    name: "meta.hdr_component3_flag"
+    bitwidth: 1
+    match_type: EXACT
+  }
+  match_fields {
+    id: 4
+    name: "meta.hdr_component4_flag"
+    bitwidth: 1
+    match_type: EXACT
+  }
+  match_fields {
+    id: 5
+    name: "meta.hdr_component5_flag"
+    bitwidth: 1
+    match_type: EXACT
+  }
+  action_refs {
+    id: 19658671
+  }
+  action_refs {
+    id: 19344232
+  }
+  action_refs {
+    id: 21257015
+    annotations: "@defaultonly"
+    scope: DEFAULT_ONLY
+  }
+  size: 5
+}
+tables {
+  preamble {
+    id: 42272636
+    name: "ingress.fib_table"
+    alias: "fib_table"
+  }
+  match_fields {
+    id: 1
+    name: "meta.components"
+    bitwidth: 8
+    match_type: EXACT
+  }
+  match_fields {
+    id: 2
+    name: "meta.c1"
+    bitwidth: 16
+    match_type: TERNARY
+  }
+  match_fields {
+    id: 3
+    name: "meta.c2"
+    bitwidth: 16
+    match_type: TERNARY
+  }
+  match_fields {
+    id: 4
+    name: "meta.c3"
+    bitwidth: 16
+    match_type: TERNARY
+  }
+  match_fields {
+    id: 5
+    name: "meta.c4"
+    bitwidth: 16
+    match_type: TERNARY
+  }
+  match_fields {
+    id: 6
+    name: "meta.name_hash"
+    bitwidth: 16
+    match_type: TERNARY
+  }
+  action_refs {
+    id: 27551970
+  }
+  action_refs {
+    id: 19344232
+  }
+  action_refs {
+    id: 21257015
+    annotations: "@defaultonly"
+    scope: DEFAULT_ONLY
+  }
+  size: 1024
+}
+tables {
+  preamble {
+    id: 43017336
+    name: "ingress.pit_table"
+    alias: "pit_table"
+  }
+  match_fields {
+    id: 1
+    name: "meta.packetType"
+    bitwidth: 8
+    match_type: EXACT
+  }
+  action_refs {
+    id: 26434212
+  }
+  action_refs {
+    id: 25662229
+  }
+  action_refs {
+    id: 21257015
+    annotations: "@defaultonly"
+    scope: DEFAULT_ONLY
+  }
+  size: 2
+}
+tables {
+  preamble {
+    id: 49702695
+    name: "ingress.updatecs_table"
+    alias: "updatecs_table"
+  }
+  match_fields {
+    id: 1
+    name: "meta.hdr_ndnlpfragcount_flag"
+    bitwidth: 1
+    match_type: EXACT
+  }
+  action_refs {
+    id: 22275235
+  }
+  action_refs {
+    id: 17904230
+  }
+  action_refs {
+    id: 21257015
+    annotations: "@defaultonly"
+    scope: DEFAULT_ONLY
+  }
+  size: 2
+}
+tables {
+  preamble {
+    id: 44606997
+    name: "ingress.updatePit_table"
+    alias: "updatePit_table"
+  }
+  match_fields {
+    id: 1
+    name: "meta.hasFIBentry"
+    bitwidth: 8
+    match_type: EXACT
+  }
+  action_refs {
+    id: 25888523
+  }
+  action_refs {
+    id: 19344232
+  }
+  action_refs {
+    id: 21257015
+    annotations: "@defaultonly"
+    scope: DEFAULT_ONLY
+  }
+  size: 2
+}
+actions {
+  preamble {
+    id: 21257015
+    name: "NoAction"
+    alias: "NoAction"
+    annotations: "@noWarn(\"unused\")"
+  }
+}
+actions {
+  preamble {
+    id: 19658671
+    name: "ingress.storeNumOfComponents"
+    alias: "storeNumOfComponents"
+  }
+  params {
+    id: 1
+    name: "total"
+    bitwidth: 8
+  }
+}
+actions {
+  preamble {
+    id: 19344232
+    name: "ingress._drop"
+    alias: "_drop"
+  }
+}
+actions {
+  preamble {
+    id: 27551970
+    name: "ingress.set_egr"
+    alias: "set_egr"
+  }
+  params {
+    id: 1
+    name: "egress_spec"
+    bitwidth: 9
+  }
+}
+actions {
+  preamble {
+    id: 29361802
+    name: "ingress.set_interestegr"
+    alias: "set_interestegr"
+  }
+}
+actions {
+  preamble {
+    id: 27798905
+    name: "ingress.computeStoreTablesIndex"
+    alias: "computeStoreTablesIndex"
+  }
+}
+actions {
+  preamble {
+    id: 26434212
+    name: "ingress.readPitEntry"
+    alias: "readPitEntry"
+  }
+}
+actions {
+  preamble {
+    id: 25662229
+    name: "ingress.cleanPitEntry"
+    alias: "cleanPitEntry"
+  }
+}
+actions {
+  preamble {
+    id: 23806571
+    name: "ingress.readSection"
+    alias: "readSection"
+  }
+}
+actions {
+  preamble {
+    id: 17977675
+    name: "ingress.writesection"
+    alias: "writesection"
+  }
+}
+actions {
+  preamble {
+    id: 23423647
+    name: "ingress.readsection_hash"
+    alias: "readsection_hash"
+  }
+}
+actions {
+  preamble {
+    id: 18594477
+    name: "ingress.writesection_hash"
+    alias: "writesection_hash"
+  }
+}
+actions {
+  preamble {
+    id: 20356420
+    name: "ingress.readCsEntry"
+    alias: "readCsEntry"
+  }
+}
+actions {
+  preamble {
+    id: 22275235
+    name: "ingress.addCstoMutist"
+    alias: "addCstoMutist"
+  }
+}
+actions {
+  preamble {
+    id: 27905565
+    name: "ingress.updateonlyCs"
+    alias: "updateonlyCs"
+  }
+}
+actions {
+  preamble {
+    id: 17904230
+    name: "ingress.updateCsEntry"
+    alias: "updateCsEntry"
+  }
+}
+actions {
+  preamble {
+    id: 19278922
+    name: "ingress.multicast"
+    alias: "multicast"
+  }
+}
+actions {
+  preamble {
+    id: 25888523
+    name: "ingress.updatePit_entry"
+    alias: "updatePit_entry"
+  }
+}
+registers {
+  preamble {
+    id: 371616963
+    name: "ingress.pit_r"
+    alias: "pit_r"
+  }
+  type_spec {
+    bitstring {
+      bit {
+        bitwidth: 32
+      }
+    }
+  }
+  size: 65536
+}
+registers {
+  preamble {
+    id: 379456677
+    name: "ingress.section_r"
+    alias: "section_r"
+  }
+  type_spec {
+    bitstring {
+      bit {
+        bitwidth: 32
+      }
+    }
+  }
+  size: 512
+}
+registers {
+  preamble {
+    id: 372391066
+    name: "ingress.section_hash_r"
+    alias: "section_hash_r"
+  }
+  type_spec {
+    bitstring {
+      bit {
+        bitwidth: 16
+      }
+    }
+  }
+  size: 512
+}
+registers {
+  preamble {
+    id: 383666138
+    name: "ingress.cs_r"
+    alias: "cs_r"
+  }
+  type_spec {
+    bitstring {
+      bit {
+        bitwidth: 32
+      }
+    }
+  }
+  size: 65536
+}
+type_info {
+}

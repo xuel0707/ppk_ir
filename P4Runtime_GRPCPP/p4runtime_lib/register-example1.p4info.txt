@@ -1,0 +1,143 @@
+pkg_info {
+  arch: "v1model"
+}
+tables {
+  preamble {
+    id: 37018274
+    name: "dmac"
+    alias: "dmac"
+  }
+  match_fields {
+    id: 1
+    name: "ethernet.dstAddr"
+    bitwidth: 48
+    match_type: EXACT
+  }
+  action_refs {
+    id: 32868228
+  }
+  action_refs {
+    id: 18431090
+  }
+  size: 512
+}
+tables {
+  preamble {
+    id: 34426950
+    name: "smac"
+    alias: "smac"
+  }
+  match_fields {
+    id: 1
+    name: "ethernet.srcAddr"
+    bitwidth: 48
+    match_type: EXACT
+  }
+  action_refs {
+    id: 32203414
+  }
+  action_refs {
+    id: 26530390
+  }
+  action_refs {
+    id: 21257015
+    annotations: "@defaultonly"
+    scope: DEFAULT_ONLY
+  }
+  size: 512
+}
+actions {
+  preamble {
+    id: 21257015
+    name: "NoAction"
+    alias: "NoAction"
+    annotations: "@noWarn(\"unused\")"
+  }
+}
+actions {
+  preamble {
+    id: 32868228
+    name: "forward"
+    alias: "forward"
+  }
+  params {
+    id: 1
+    name: "port"
+    bitwidth: 9
+  }
+}
+actions {
+  preamble {
+    id: 18431090
+    name: "bcast"
+    alias: "bcast"
+  }
+}
+actions {
+  preamble {
+    id: 32203414
+    name: "mac_learn"
+    alias: "mac_learn"
+  }
+}
+actions {
+  preamble {
+    id: 26530390
+    name: "_nop"
+    alias: "_nop"
+  }
+}
+registers {
+  preamble {
+    id: 377543144
+    name: "reg1_0"
+    alias: "reg1"
+  }
+  type_spec {
+    bitstring {
+      bit {
+        bitwidth: 32
+      }
+    }
+  }
+  size: 1
+}
+digests {
+  preamble {
+    id: 401035839
+    name: "mac_learn_digest"
+    alias: "mac_learn_digest"
+  }
+  type_spec {
+    struct {
+      name: "mac_learn_digest"
+    }
+  }
+}
+type_info {
+  structs {
+    key: "mac_learn_digest"
+    value {
+      members {
+        name: "srcAddr"
+        type_spec {
+          bitstring {
+            bit {
+              bitwidth: 48
+            }
+          }
+        }
+      }
+      members {
+        name: "ingress_port"
+        type_spec {
+          bitstring {
+            bit {
+              bitwidth: 9
+            }
+          }
+        }
+      }
+    }
+  }
+}

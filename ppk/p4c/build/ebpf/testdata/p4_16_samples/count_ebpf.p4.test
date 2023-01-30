@@ -1,0 +1,5 @@
+#! /usr/bin/env bash
+# Generated file, modify with care
+
+cd /home/aa/ppk_sw/ppk/p4c/build
+/home/aa/ppk_sw/ppk/p4c/backends/ebpf/run-ebpf-test.py -t test -c "/home/aa/ppk_sw/ppk/p4c/build/p4c-ebpf" /home/aa/ppk_sw/ppk/p4c  "$@" /home/aa/ppk_sw/ppk/p4c/testdata/p4_16_samples/count_ebpf.p4

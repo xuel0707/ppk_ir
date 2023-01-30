@@ -1,0 +1,19 @@
+{
+    "target":"bmv2",
+    "p4info":"build/mf_2.p4info.txt",
+    "bmv2_json":"build/mf_2.json",
+    "table_entries":[
+        {
+            "table":"MyIngress.dest_guid_exact_0",
+            "match":{
+                "hdr.mf.dest_guid":"0.0.0.101"
+            },
+            "default_action":false,
+            "action_name":"MyIngress.dest_guid_forward",
+            "action_params":{
+                "nxtHopMac":"a0:36:9f:26:41:af",
+                "port":1
+            }
+        }
+    ]
+}

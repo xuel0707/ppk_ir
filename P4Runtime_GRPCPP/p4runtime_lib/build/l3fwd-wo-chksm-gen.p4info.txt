@@ -1,0 +1,136 @@
+pkg_info {
+  arch: "v1model"
+}
+tables {
+  preamble {
+    id: 34892705
+    name: "ipv4_lpm_0"
+    alias: "ipv4_lpm"
+  }
+  match_fields {
+    id: 1
+    name: "ipv4.dstAddr"
+    bitwidth: 32
+    match_type: LPM
+  }
+  action_refs {
+    id: 23300268
+  }
+  action_refs {
+    id: 19143480
+  }
+  action_refs {
+    id: 21257015
+    annotations: "@defaultonly"
+    scope: DEFAULT_ONLY
+  }
+  size: 1024
+}
+tables {
+  preamble {
+    id: 39225476
+    name: "macfwd_0"
+    alias: "macfwd"
+  }
+  match_fields {
+    id: 1
+    name: "ethernet.dstAddr"
+    bitwidth: 48
+    match_type: EXACT
+  }
+  action_refs {
+    id: 26530390
+  }
+  action_refs {
+    id: 19143480
+  }
+  action_refs {
+    id: 21257015
+    annotations: "@defaultonly"
+    scope: DEFAULT_ONLY
+  }
+  size: 256
+}
+tables {
+  preamble {
+    id: 43518740
+    name: "nexthops_0"
+    alias: "nexthops"
+  }
+  match_fields {
+    id: 1
+    name: "routing_metadata.nhgroup"
+    bitwidth: 32
+    match_type: EXACT
+  }
+  action_refs {
+    id: 32868228
+  }
+  action_refs {
+    id: 19143480
+  }
+  action_refs {
+    id: 21257015
+    annotations: "@defaultonly"
+    scope: DEFAULT_ONLY
+  }
+  size: 512
+}
+actions {
+  preamble {
+    id: 21257015
+    name: "NoAction"
+    alias: "NoAction"
+    annotations: "@noWarn(\"unused\")"
+  }
+}
+actions {
+  preamble {
+    id: 23300268
+    name: "set_nhop"
+    alias: "set_nhop"
+  }
+  params {
+    id: 1
+    name: "nhgroup"
+    bitwidth: 32
+  }
+}
+actions {
+  preamble {
+    id: 19143480
+    name: "_drop"
+    alias: "_drop"
+  }
+}
+actions {
+  preamble {
+    id: 26530390
+    name: "_nop"
+    alias: "_nop"
+  }
+}
+actions {
+  preamble {
+    id: 32868228
+    name: "forward"
+    alias: "forward"
+  }
+  params {
+    id: 1
+    name: "dmac_val"
+    bitwidth: 48
+  }
+  params {
+    id: 2
+    name: "smac_val"
+    bitwidth: 48
+  }
+  params {
+    id: 3
+    name: "port"
+    bitwidth: 9
+  }
+}
+type_info {
+}

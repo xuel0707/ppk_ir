@@ -1,0 +1,18 @@
+{
+  "target": "bmv2",
+  "p4info": "build/l2fwd-gen.p4info.txt",
+  "bmv2_json": "build/l2fwd-gen.json",
+  "table_entries": [
+
+    {
+      "table": "dmac_0",
+      "match": {
+        "ethernet.dstAddr": "a0:36:9f:a8:7f:40"
+      },
+      "action_name": "forward",
+      "action_params": {
+      "port":0
+      }
+    }
+  ]
+}

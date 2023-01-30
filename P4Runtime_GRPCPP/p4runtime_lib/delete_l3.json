@@ -1,0 +1,18 @@
+{
+    "target":"bmv2",
+    "p4info":"build/l3fwd-wo-chksm-gen.p4info.txt",
+    "bmv2_json":"build/l3fwd-wo-chksm-gen.json",
+    "table_entries":[
+        {
+            "table":"ipv4_lpm",
+            "match":{
+                "ipv4.dstAddr":["192.168.30.183",32]
+            },
+            "default_action":false,
+            "action_name":"set_nhop",
+            "action_params":{
+                "nhgroup":0
+            }
+        }
+    ]
+}

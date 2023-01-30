@@ -1,0 +1,2 @@
+/usr/bin/ar qc libp4ctoolkit.a  CMakeFiles/p4ctoolkit.dir/unified_libp4ctoolkit_srcs_1.cpp.o
+/usr/bin/ranlib libp4ctoolkit.a
