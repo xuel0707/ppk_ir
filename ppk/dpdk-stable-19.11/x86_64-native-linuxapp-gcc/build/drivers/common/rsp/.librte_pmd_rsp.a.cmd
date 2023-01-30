@@ -1,0 +1,1 @@
+cmd_librte_pmd_rsp.a = ar crDs librte_pmd_rsp.a rsp_asym.o rsp_asym_sess.o rsp_asym_pmd.o rsp_sym.o rsp_session.o rsp_sym_pmd.o rsp_bulk.o rsp_bulk_pmd.o rpu_fw_data.o rsp_device.o rsp_common.o rsp_logs.o rsp_qp.o 
