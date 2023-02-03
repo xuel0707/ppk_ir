@@ -157,11 +157,14 @@ typedef struct bitfield_handle_s {
 // Extracts a field to the given uint32_t variable with byte conversion (always) [MAX 4 BYTES]
 #define EXTRACT_INT32_NTOH(fd, dst) { \
     if(fd.bytecount == 1) \
-        dst =                  FIELD_MASKED_BYTES(fd) >> (8  - fd.bitcount); \
+        dst =  FIELD_MASKED_BYTES(fd) >> (8  - fd.bitcount); \
     else if(fd.bytecount == 2) \
-        dst = rte_be_to_cpu_16(FIELD_MASKED_BYTES(fd)) >> (16 - fd.bitcount); \
+        dst = rte_be_to_cpu_16((FIELD_BYTES(fd) & BITS_MASK1(fd)) | \
+             ((FIELD_BYTES(fd) & BITS_MASK3(fd)) >> (16 - fd.bitwidth))); \
     else \
-        dst = rte_be_to_cpu_32(FIELD_MASKED_BYTES(fd)) >> (32 - fd.bitcount); \
+        dst = rte_be_to_cpu_32((FIELD_BYTES(fd) & BITS_MASK1(fd)) | \
+             ((FIELD_BYTES(fd) & BITS_MASK2(fd)) >> fd.bitoffset) | \
+             ((FIELD_BYTES(fd) & BITS_MASK3(fd)) >> (fd.bytecount * 8 - fd.bitwidth))); \
 }
 
 // Extracts a field to the given uint32_t variable (no byteorder conversion) [MAX 4 BYTES]
