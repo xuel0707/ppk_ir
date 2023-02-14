@@ -15,10 +15,10 @@ NUM_CORES=`grep -c ^processor /proc/cpuinfo`
 # 安装Mininet
 mininet_install() {
 tar -zxvf grpc.tar.gz
-tar -zxvf ppk.tar.gz
+# tar -zxvf ppk.tar.gz
 tar -zxvf protobuf.tar.gz
 tar -zxvf PI.tar.gz
-tar -zxvf P4Runtime_GRPCPP.tar.gz
+# tar -zxvf P4Runtime_GRPCPP.tar.gz
 }
 
 ########################以下代码块的安装顺序不可改变###################################

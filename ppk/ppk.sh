@@ -390,7 +390,7 @@ fi
 
 if [ "${OPTS[kni]}" == on ] ; then
     KNI_STORAGE="1"
-    echo "hy123123" |sudo -S insmod ${RTE_SDK}/x86_64-native-linuxapp-gcc/kmod/rte_kni.ko carrier=on
+    echo "123456" |sudo -S insmod ${RTE_SDK}/x86_64-native-linuxapp-gcc/kmod/rte_kni.ko carrier=on
     sed -i 's/\#define KNI_STORAGE.*/\#define KNI_STORAGE 1/g' ppk/dpdk/includes/dpdk_nicon.h
 else
     KNI_STORAGE="0"
@@ -414,7 +414,7 @@ fi
 
 if [ "$(optvalue run)" != off ]; then
     verbosemsg "Requesting root access..."
-    echo "hy123123" | sudo -S echo -n ""
+    echo "123456" | sudo -S echo -n ""
     verbosemsg "Root access granted, starting..."
 fi
 
