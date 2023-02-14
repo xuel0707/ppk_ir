@@ -122,6 +122,22 @@
 #define RTE_LIBRTE_I40E_QUEUE_NUM_PER_VF 4
 #define RTE_LIBRTE_I40E_QUEUE_NUM_PER_VM 4
 
+/* txgbe defines */
+#undef RTE_TXGBE_DEBUG_BP
+#define RTE_TXGBE_BP_AUTO 1
+#undef RTE_TXGBE_KR_POLL
+#undef RTE_TXGBE_KR_PRESENT
+#undef RTE_TXGBE_KX_TXRX_PIN
+#undef RTE_TXGBE_KX_SGMII
+#undef RTE_TXGBE_FFE_SET
+#define RTE_TXGBE_FFE_MAIN 0x1B1B
+#define RTE_TXGBE_FFE_PRE 0x0808
+#define RTE_TXGBE_FFE_POST 0x2C2C
+
+/* ngbe defines */
+#undef RTE_NGBE_POLL
+#undef RTE_NGBE_RETRY
+
 /* Ring net PMD settings */
 #define RTE_PMD_RING_MAX_RX_RINGS 16
 #define RTE_PMD_RING_MAX_TX_RINGS 16

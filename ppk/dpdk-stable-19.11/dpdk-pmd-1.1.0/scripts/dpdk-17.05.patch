@@ -1,0 +1,69 @@
+diff --git a/config/common_base b/config/common_base
+index 8907bea36..afd213ff2 100644
+--- a/config/common_base
++++ b/config/common_base
+@@ -182,6 +182,38 @@ CONFIG_RTE_LIBRTE_IXGBE_DEBUG_TX_FREE=n
+ CONFIG_RTE_LIBRTE_IXGBE_DEBUG_DRIVER=n
+ CONFIG_RTE_LIBRTE_IXGBE_PF_DISABLE_STRIP_CRC=n
+ CONFIG_RTE_IXGBE_INC_VECTOR=y
+
++#
++# Compile burst-oriented NGBE PMD driver
++#
++CONFIG_RTE_LIBRTE_NGBE_PMD=y
++CONFIG_RTE_LIBRTE_NGBE_DEBUG_RX=n
++CONFIG_RTE_LIBRTE_NGBE_DEBUG_TX=n
++CONFIG_RTE_LIBRTE_NGBE_DEBUG_TX_FREE=n
++CONFIG_RTE_NGBE_INC_VECTOR=n
++CONFIG_RTE_LIBRTE_NGBE_BYPASS=n
++CONFIG_RTE_NGBE_POLL=n
++CONFIG_RTE_NGBE_RETRY=n
++
++#
++# Compile burst-oriented TXGBE PMD driver
++#
++CONFIG_RTE_LIBRTE_TXGBE_PMD=y
++CONFIG_RTE_LIBRTE_TXGBE_DEBUG_RX=n
++CONFIG_RTE_LIBRTE_TXGBE_DEBUG_TX=n
++CONFIG_RTE_LIBRTE_TXGBE_DEBUG_TX_FREE=n
++CONFIG_RTE_TXGBE_INC_VECTOR=n
++CONFIG_RTE_LIBRTE_TXGBE_BYPASS=n
++CONFIG_RTE_TXGBE_DEBUG_BP=n
++CONFIG_RTE_TXGBE_BP_AUTO=y
++CONFIG_RTE_TXGBE_KR_POLL=n
++CONFIG_RTE_TXGBE_KR_PRESENT=n
++CONFIG_RTE_TXGBE_KX_TXRX_PIN=n
++CONFIG_RTE_TXGBE_KX_SGMII=n
++CONFIG_RTE_TXGBE_FFE_SET=n
++CONFIG_RTE_TXGBE_FFE_MAIN=0x1B1B
++CONFIG_RTE_TXGBE_FFE_PRE=0x0808
++CONFIG_RTE_TXGBE_FFE_POST=0x2C2C
++
+ #
+ # Compile burst-oriented I40E PMD driver
+diff --git a/drivers/net/Makefile b/drivers/net/Makefile
+index 35ed8135a..b46d77c17 100644
+--- a/drivers/net/Makefile
++++ b/drivers/net/Makefile
+@@ -91,6 +91,8 @@ DIRS-$(CONFIG_RTE_LIBRTE_PMD_TAP) += tap
+ DEPDIRS-tap = $(core-libs) librte_hash
+ DIRS-$(CONFIG_RTE_LIBRTE_THUNDERX_NICVF_PMD) += thunderx
+ DEPDIRS-thunderx = $(core-libs)
++DIRS-$(CONFIG_RTE_LIBRTE_TXGBE_PMD) += netswift
++DEPDIRS-netswift = $(core-libs) librte_hash
+ DIRS-$(CONFIG_RTE_LIBRTE_VIRTIO_PMD) += virtio
+ DEPDIRS-virtio = $(core-libs)
+ DIRS-$(CONFIG_RTE_LIBRTE_VMXNET3_PMD) += vmxnet3
+diff --git a/mk/rte.app.mk b/mk/rte.app.mk
+index bcaf1b382..91608f28d 100644
+--- a/mk/rte.app.mk
++++ b/mk/rte.app.mk
+@@ -137,6 +137,8 @@ _LDLIBS-$(CONFIG_RTE_LIBRTE_SFC_EFX_PMD)    += -lrte_pmd_sfc_efx
+ _LDLIBS-$(CONFIG_RTE_LIBRTE_PMD_SZEDATA2)   += -lrte_pmd_szedata2 -lsze2
+ _LDLIBS-$(CONFIG_RTE_LIBRTE_PMD_TAP)        += -lrte_pmd_tap
+ _LDLIBS-$(CONFIG_RTE_LIBRTE_THUNDERX_NICVF_PMD) += -lrte_pmd_thunderx_nicvf -lm
++_LDLIBS-$(CONFIG_RTE_LIBRTE_NGBE_PMD)      += -lrte_pmd_ngbe
++_LDLIBS-$(CONFIG_RTE_LIBRTE_TXGBE_PMD)      += -lrte_pmd_txgbe
+ _LDLIBS-$(CONFIG_RTE_LIBRTE_VIRTIO_PMD)     += -lrte_pmd_virtio
+ ifeq ($(CONFIG_RTE_LIBRTE_VHOST),y)
+ _LDLIBS-$(CONFIG_RTE_LIBRTE_PMD_VHOST)      += -lrte_pmd_vhost

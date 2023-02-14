@@ -6,7 +6,8 @@ if is_windows
 endif
 
 # Defines the order in which the drivers are buit.
-dpdk_driver_classes = ['common',
+subdirs = ['common',
+ 	       'net/netswift', # depends on bus.
 	       'bus',
 	       'mempool', # depends on common and bus.
 	       'net',     # depends on common, bus, mempool
@@ -23,19 +24,44 @@ if cc.has_argument('-Wno-format-truncation')
 	default_cflags += '-Wno-format-truncation'
 endif
 
-foreach class:dpdk_driver_classes
+foreach subpath:subdirs
 	drivers = []
+	versions = {}
 	std_deps = []
 	config_flag_fmt = '' # format string used to set the value in dpdk_conf
 	driver_name_fmt = '' # format string for driver name, used to name
 	                     # the library, the dependency and to find the
 	                     # version file for linking
+	vender = ''
 
-	subdir(class)
-	class_drivers = []
+	# subpath can be either "class" or "class/driver"
+	if subpath.contains('/')
+		driver_path = subpath.split('/')
+		class = driver_path[0]
+		drivers += driver_path[1]
+		if drivers[0] == 'netswift'
+			vender = drivers[0]
+			drivers = []
+			subdir(subpath)
+		endif
+	else
+		class = subpath
+		subdir(class)
+	endif
+
+	# save class name on first occurrence
+	if not dpdk_driver_classes.contains(class)
+		dpdk_driver_classes += class
+	endif
+	# get already enabled drivers of the same class
+	enabled_drivers = get_variable(class + '_drivers', [])
 
 	foreach drv:drivers
-		drv_path = join_paths(class, drv)
+		if vender != ''
+			drv_path = join_paths(class, vender, drv, versions[drv])
+		else
+			drv_path = join_paths(class, drv)
+		endif
 
 		# set up empty variables used for build
 		build = true # set to false to disable, e.g. missing deps
@@ -95,7 +121,7 @@ foreach class:dpdk_driver_classes
 						'_disable_reason', reason)
 			endif
 		else
-			class_drivers += name
+			enabled_drivers += name
 
 			dpdk_conf.set(config_flag_fmt.format(name.to_upper()),1)
 			lib_name = driver_name_fmt.format(name)
@@ -206,5 +232,5 @@ foreach class:dpdk_driver_classes
 		endif # build
 	endforeach
 
-	set_variable(class + '_drivers', class_drivers)
+	set_variable(class + '_drivers', enabled_drivers)
 endforeach

@@ -220,6 +220,8 @@ _LDLIBS-$(CONFIG_RTE_LIBRTE_NFB_PMD)        += -lrte_pmd_nfb
 _LDLIBS-$(CONFIG_RTE_LIBRTE_NFB_PMD)        +=  $(shell command -v pkg-config > /dev/null 2>&1 && pkg-config --libs netcope-common)
 _LDLIBS-$(CONFIG_RTE_LIBRTE_PMD_TAP)        += -lrte_pmd_tap
 _LDLIBS-$(CONFIG_RTE_LIBRTE_THUNDERX_NICVF_PMD) += -lrte_pmd_thunderx_nicvf
+_LDLIBS-$(CONFIG_RTE_LIBRTE_TXGBE_PMD)      += -lrte_pmd_txgbe
+_LDLIBS-$(CONFIG_RTE_LIBRTE_NGBE_PMD)      += -lrte_pmd_ngbe
 _LDLIBS-$(CONFIG_RTE_LIBRTE_VDEV_NETVSC_PMD) += -lrte_pmd_vdev_netvsc
 _LDLIBS-$(CONFIG_RTE_LIBRTE_VIRTIO_PMD)     += -lrte_pmd_virtio
 ifeq ($(CONFIG_RTE_LIBRTE_VHOST),y)
