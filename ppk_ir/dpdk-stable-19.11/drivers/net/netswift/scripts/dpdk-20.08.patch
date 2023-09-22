@@ -1,0 +1,145 @@
+diff --git a/config/common_base b/config/common_base
+index fbf0ee70..037aea6a 100644
+--- a/config/common_base
++++ b/config/common_base
+@@ -389,6 +389,38 @@ CONFIG_RTE_LIBRTE_MLX5_VDPA_PMD=n
+ CONFIG_RTE_IBVERBS_LINK_DLOPEN=n
+ CONFIG_RTE_IBVERBS_LINK_STATIC=n
+ 
++#
++# Compile burst-oriented TXGBE PMD driver
++#
++CONFIG_RTE_LIBRTE_TXGBE_PMD=y
++CONFIG_RTE_LIBRTE_TXGBE_DEBUG_RX=n
++CONFIG_RTE_LIBRTE_TXGBE_DEBUG_TX=n
++CONFIG_RTE_LIBRTE_TXGBE_DEBUG_TX_FREE=n
++CONFIG_RTE_LIBRTE_TXGBE_PF_DISABLE_STRIP_CRC=n
++CONFIG_RTE_LIBRTE_TXGBE_BYPASS=n
++CONFIG_RTE_TXGBE_DEBUG_BP=n
++CONFIG_RTE_TXGBE_BP_AUTO=y
++CONFIG_RTE_TXGBE_KR_POLL=n
++CONFIG_RTE_TXGBE_KR_PRESENT=n
++CONFIG_RTE_TXGBE_KX_TXRX_PIN=n
++CONFIG_RTE_TXGBE_KX_SGMII=n
++CONFIG_RTE_TXGBE_FFE_SET=n
++CONFIG_RTE_TXGBE_FFE_MAIN=0x1B1B
++CONFIG_RTE_TXGBE_FFE_PRE=0x0808
++CONFIG_RTE_TXGBE_FFE_POST=0x2C2C
++
++#
++# Compile burst-oriented NGBE PMD driver
++#
++CONFIG_RTE_LIBRTE_NGBE_PMD=y
++CONFIG_RTE_LIBRTE_NGBE_DEBUG_RX=n
++CONFIG_RTE_LIBRTE_NGBE_DEBUG_TX=n
++CONFIG_RTE_LIBRTE_NGBE_DEBUG_TX_FREE=n
++CONFIG_RTE_LIBRTE_NGBE_PF_DISABLE_STRIP_CRC=n
++CONFIG_RTE_LIBRTE_NGBE_BYPASS=n
++CONFIG_RTE_NGBE_POLL=n
++CONFIG_RTE_NGBE_RETRY=n
++
+ #
+ # Compile burst-oriented Netronome NFP PMD driver
+ #
+diff --git a/config/rte_config.h b/config/rte_config.h
+index 9bb91534..5043ceaf 100644
+--- a/config/rte_config.h
++++ b/config/rte_config.h
+@@ -128,6 +128,22 @@
+ #define RTE_LIBRTE_I40E_QUEUE_NUM_PER_VF 4
+ #define RTE_LIBRTE_I40E_QUEUE_NUM_PER_VM 4
+
++/* txgbe defines */
++#undef RTE_TXGBE_DEBUG_BP
++#define RTE_TXGBE_BP_AUTO 1
++#undef RTE_TXGBE_KR_POLL
++#undef RTE_TXGBE_KR_PRESENT
++#undef RTE_TXGBE_KX_TXRX_PIN
++#undef RTE_TXGBE_KX_SGMII
++#undef RTE_TXGBE_FFE_SET
++#define RTE_TXGBE_FFE_MAIN 0x1B1B
++#define RTE_TXGBE_FFE_PRE 0x0808
++#define RTE_TXGBE_FFE_POST 0x2C2C
++
++/* ngbe defines */
++#undef RTE_NGBE_POLL
++#undef RTE_NGBE_RETRY
++
+ /* Ring net PMD settings */
+ #define RTE_PMD_RING_MAX_RX_RINGS 16
+ #define RTE_PMD_RING_MAX_TX_RINGS 16
+diff --git a/drivers/meson.build b/drivers/meson.build
+index 5f952655..a17be31e 100644
+--- a/drivers/meson.build
++++ b/drivers/meson.build
+@@ -8,6 +8,7 @@ subdirs = [
+ 	'common/mlx5', # depends on bus.
+ 	'mempool', # depends on common and bus.
+ 	'net',     # depends on common, bus, mempool
++	'net/netswift', # depends on bus.
+ 	'raw',     # depends on common, bus and net.
+ 	'crypto',  # depends on common, bus and mempool (net in future).
+ 	'compress', # depends on common, bus, mempool.
+@@ -30,17 +31,24 @@ endif
+ 
+ foreach subpath:subdirs
+ 	drivers = []
++	versions = {}
+ 	std_deps = []
+ 	config_flag_fmt = '' # format string used to set the value in dpdk_conf
+ 	driver_name_fmt = '' # format string for driver name, used to name
+ 	                     # the library, the dependency and to find the
+ 	                     # version file for linking
++	vender = ''
+ 
+ 	# subpath can be either "class" or "class/driver"
+ 	if subpath.contains('/')
+ 		driver_path = subpath.split('/')
+ 		class = driver_path[0]
+ 		drivers += driver_path[1]
++		if drivers[0] == 'netswift'
++			vender = drivers[0]
++			drivers = []
++			subdir(subpath)
++		endif
+ 	else
+ 		class = subpath
+ 		subdir(class)
+@@ -54,7 +62,11 @@ foreach subpath:subdirs
+ 	enabled_drivers = get_variable(class + '_drivers', [])
+ 
+ 	foreach drv:drivers
+-		drv_path = join_paths(class, drv)
++		if vender != ''
++			drv_path = join_paths(class, vender, drv, versions[drv])
++		else
++			drv_path = join_paths(class, drv)
++		endif
+ 
+ 		# set up empty variables used for build
+ 		build = true # set to false to disable, e.g. missing deps
+diff --git a/drivers/net/Makefile b/drivers/net/Makefile
+index 361974ea..a7814b95 100644
+--- a/drivers/net/Makefile
++++ b/drivers/net/Makefile
+@@ -59,6 +59,7 @@ DIRS-$(CONFIG_RTE_LIBRTE_SFC_EFX_PMD) += sfc
+ DIRS-$(CONFIG_RTE_LIBRTE_PMD_SZEDATA2) += szedata2
+ DIRS-$(CONFIG_RTE_LIBRTE_PMD_TAP) += tap
+ DIRS-$(CONFIG_RTE_LIBRTE_THUNDERX_NICVF_PMD) += thunderx
++DIRS-$(CONFIG_RTE_LIBRTE_TXGBE_PMD) += netswift
+ DIRS-$(CONFIG_RTE_LIBRTE_VDEV_NETVSC_PMD) += vdev_netvsc
+ DIRS-$(CONFIG_RTE_LIBRTE_VIRTIO_PMD) += virtio
+ DIRS-$(CONFIG_RTE_LIBRTE_VMXNET3_PMD) += vmxnet3
+diff --git a/mk/rte.app.mk b/mk/rte.app.mk
+index a5442599..85e3e8b5 100644
+--- a/mk/rte.app.mk
++++ b/mk/rte.app.mk
+@@ -239,6 +239,8 @@ _LDLIBS-$(CONFIG_RTE_LIBRTE_NFB_PMD)        += -lrte_pmd_nfb
+ _LDLIBS-$(CONFIG_RTE_LIBRTE_NFB_PMD)        +=  $(shell command -v pkg-config > /dev/null 2>&1 && pkg-config --libs netcope-common)
+ _LDLIBS-$(CONFIG_RTE_LIBRTE_PMD_TAP)        += -lrte_pmd_tap
+ _LDLIBS-$(CONFIG_RTE_LIBRTE_THUNDERX_NICVF_PMD) += -lrte_pmd_thunderx_nicvf
++_LDLIBS-$(CONFIG_RTE_LIBRTE_TXGBE_PMD)      += -lrte_pmd_txgbe
++_LDLIBS-$(CONFIG_RTE_LIBRTE_NGBE_PMD)      += -lrte_pmd_ngbe
+ _LDLIBS-$(CONFIG_RTE_LIBRTE_VDEV_NETVSC_PMD) += -lrte_pmd_vdev_netvsc
+ _LDLIBS-$(CONFIG_RTE_LIBRTE_VIRTIO_PMD)     += -lrte_pmd_virtio
+ ifeq ($(CONFIG_RTE_LIBRTE_VHOST),y)

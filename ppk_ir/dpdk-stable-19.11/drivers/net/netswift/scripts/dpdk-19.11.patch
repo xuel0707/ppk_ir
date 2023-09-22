@@ -1,0 +1,174 @@
+diff --git a/config/common_base b/config/common_base
+index 7dec7ed4..47317f49 100644
+--- a/config/common_base
++++ b/config/common_base
+@@ -298,6 +298,38 @@ CONFIG_RTE_LIBRTE_IXGBE_PF_DISABLE_STRIP_CRC=n
+ CONFIG_RTE_IXGBE_INC_VECTOR=y
+ CONFIG_RTE_LIBRTE_IXGBE_BYPASS=n
+ 
++#
++# Compile burst-oriented TXGBE PMD driver
++#
++CONFIG_RTE_LIBRTE_TXGBE_PMD=y
++CONFIG_RTE_LIBRTE_TXGBE_DEBUG_RX=n
++CONFIG_RTE_LIBRTE_TXGBE_DEBUG_TX=n
++CONFIG_RTE_LIBRTE_TXGBE_DEBUG_TX_FREE=n
++CONFIG_RTE_TXGBE_INC_VECTOR=n
++CONFIG_RTE_LIBRTE_TXGBE_BYPASS=n
++CONFIG_RTE_TXGBE_DEBUG_BP=n
++CONFIG_RTE_TXGBE_BP_AUTO=y
++CONFIG_RTE_TXGBE_KR_POLL=n
++CONFIG_RTE_TXGBE_KR_PRESENT=n
++CONFIG_RTE_TXGBE_KX_TXRX_PIN=n
++CONFIG_RTE_TXGBE_KX_SGMII=n
++CONFIG_RTE_TXGBE_FFE_SET=n
++CONFIG_RTE_TXGBE_FFE_MAIN=0x1B1B
++CONFIG_RTE_TXGBE_FFE_PRE=0x0808
++CONFIG_RTE_TXGBE_FFE_POST=0x2C2C
++
++#
++# Compile burst-oriented NGBE PMD driver
++#
++CONFIG_RTE_LIBRTE_NGBE_PMD=y
++CONFIG_RTE_LIBRTE_NGBE_DEBUG_RX=n
++CONFIG_RTE_LIBRTE_NGBE_DEBUG_TX=n
++CONFIG_RTE_LIBRTE_NGBE_DEBUG_TX_FREE=n
++CONFIG_RTE_NGBE_INC_VECTOR=n
++CONFIG_RTE_LIBRTE_NGBE_BYPASS=n
++CONFIG_RTE_NGBE_POLL=n
++CONFIG_RTE_NGBE_RETRY=n
++
+ #
+ # Compile burst-oriented I40E PMD driver
+ #
+diff --git a/config/rte_config.h b/config/rte_config.h
+index d30786bc..f5deaa91 100644
+--- a/config/rte_config.h
++++ b/config/rte_config.h
+@@ -122,6 +122,22 @@
+ #define RTE_LIBRTE_I40E_QUEUE_NUM_PER_VF 4
+ #define RTE_LIBRTE_I40E_QUEUE_NUM_PER_VM 4
+ 
++/* txgbe defines */
++#undef RTE_TXGBE_DEBUG_BP
++#define RTE_TXGBE_BP_AUTO 1
++#undef RTE_TXGBE_KR_POLL
++#undef RTE_TXGBE_KR_PRESENT
++#undef RTE_TXGBE_KX_TXRX_PIN
++#undef RTE_TXGBE_KX_SGMII
++#undef RTE_TXGBE_FFE_SET
++#define RTE_TXGBE_FFE_MAIN 0x1B1B
++#define RTE_TXGBE_FFE_PRE 0x0808
++#define RTE_TXGBE_FFE_POST 0x2C2C
++
++/* ngbe defines */
++#undef RTE_NGBE_POLL
++#undef RTE_NGBE_RETRY
++
+ /* Ring net PMD settings */
+ #define RTE_PMD_RING_MAX_RX_RINGS 16
+ #define RTE_PMD_RING_MAX_TX_RINGS 16
+diff --git a/drivers/meson.build b/drivers/meson.build
+index 72eec460..5c070513 100644
+--- a/drivers/meson.build
++++ b/drivers/meson.build
+@@ -6,6 +6,7 @@ if is_windows
+ endif
+ 
+ # Defines the order in which the drivers are buit.
+-dpdk_driver_classes = ['common',
++subdirs = ['common',
++ 	       'net/netswift', # depends on bus.
+ 	       'bus',
+ 	       'mempool', # depends on common and bus.
+@@ -23,19 +24,44 @@ if cc.has_argument('-Wno-format-truncation')
+ 	default_cflags += '-Wno-format-truncation'
+ endif
+ 
+-foreach class:dpdk_driver_classes
++foreach subpath:subdirs
+ 	drivers = []
++	versions = {}
+ 	std_deps = []
+ 	config_flag_fmt = '' # format string used to set the value in dpdk_conf
+ 	driver_name_fmt = '' # format string for driver name, used to name
+ 	                     # the library, the dependency and to find the
+ 	                     # version file for linking
+-
+-	subdir(class)
+-	class_drivers = []
++	vender = ''
++
++	# subpath can be either "class" or "class/driver"
++	if subpath.contains('/')
++		driver_path = subpath.split('/')
++		class = driver_path[0]
++		drivers += driver_path[1]
++		if drivers[0] == 'netswift'
++			vender = drivers[0]
++			drivers = []
++			subdir(subpath)
++		endif
++	else
++		class = subpath
++		subdir(class)
++	endif
++
++	# save class name on first occurrence
++	if not dpdk_driver_classes.contains(class)
++		dpdk_driver_classes += class
++	endif
++	# get already enabled drivers of the same class
++	enabled_drivers = get_variable(class + '_drivers', [])
+ 
+ 	foreach drv:drivers
+-		drv_path = join_paths(class, drv)
++		if vender != ''
++			drv_path = join_paths(class, vender, drv, versions[drv])
++		else
++			drv_path = join_paths(class, drv)
++		endif
+ 
+ 		# set up empty variables used for build
+ 		build = true # set to false to disable, e.g. missing deps
+@@ -95,7 +121,7 @@ foreach class:dpdk_driver_classes
+ 						'_disable_reason', reason)
+ 			endif
+ 		else
+-			class_drivers += name
++			enabled_drivers += name
+ 
+ 			dpdk_conf.set(config_flag_fmt.format(name.to_upper()),1)
+ 			lib_name = driver_name_fmt.format(name)
+@@ -206,5 +232,5 @@ foreach class:dpdk_driver_classes
+ 		endif # build
+ 	endforeach
+ 
+-	set_variable(class + '_drivers', class_drivers)
++	set_variable(class + '_drivers', enabled_drivers)
+ endforeach
+diff --git a/drivers/net/Makefile b/drivers/net/Makefile
+index cee30367..18a0b57d 100644
+--- a/drivers/net/Makefile
++++ b/drivers/net/Makefile
+@@ -57,6 +57,7 @@ DIRS-$(CONFIG_RTE_LIBRTE_SFC_EFX_PMD) += sfc
+ DIRS-$(CONFIG_RTE_LIBRTE_PMD_SZEDATA2) += szedata2
+ DIRS-$(CONFIG_RTE_LIBRTE_PMD_TAP) += tap
+ DIRS-$(CONFIG_RTE_LIBRTE_THUNDERX_NICVF_PMD) += thunderx
++DIRS-$(CONFIG_RTE_LIBRTE_TXGBE_PMD) += netswift
+ DIRS-$(CONFIG_RTE_LIBRTE_VDEV_NETVSC_PMD) += vdev_netvsc
+ DIRS-$(CONFIG_RTE_LIBRTE_VIRTIO_PMD) += virtio
+ DIRS-$(CONFIG_RTE_LIBRTE_VMXNET3_PMD) += vmxnet3
+diff --git a/mk/rte.app.mk b/mk/rte.app.mk
+index 05ea034b..760e9fe6 100644
+--- a/mk/rte.app.mk
++++ b/mk/rte.app.mk
+@@ -220,6 +220,8 @@ _LDLIBS-$(CONFIG_RTE_LIBRTE_NFB_PMD)        += -lrte_pmd_nfb
+ _LDLIBS-$(CONFIG_RTE_LIBRTE_NFB_PMD)        +=  $(shell command -v pkg-config > /dev/null 2>&1 && pkg-config --libs netcope-common)
+ _LDLIBS-$(CONFIG_RTE_LIBRTE_PMD_TAP)        += -lrte_pmd_tap
+ _LDLIBS-$(CONFIG_RTE_LIBRTE_THUNDERX_NICVF_PMD) += -lrte_pmd_thunderx_nicvf
++_LDLIBS-$(CONFIG_RTE_LIBRTE_TXGBE_PMD)      += -lrte_pmd_txgbe
++_LDLIBS-$(CONFIG_RTE_LIBRTE_NGBE_PMD)      += -lrte_pmd_ngbe
+ _LDLIBS-$(CONFIG_RTE_LIBRTE_VDEV_NETVSC_PMD) += -lrte_pmd_vdev_netvsc
+ _LDLIBS-$(CONFIG_RTE_LIBRTE_VIRTIO_PMD)     += -lrte_pmd_virtio
+ ifeq ($(CONFIG_RTE_LIBRTE_VHOST),y)

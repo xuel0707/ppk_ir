@@ -1,0 +1,68 @@
+diff --git a/config/common_base b/config/common_base
+index 0124e86c6..9e7136303 100644
+--- a/config/common_base
++++ b/config/common_base
+@@ -169,6 +169,38 @@ CONFIG_RTE_LIBRTE_IXGBE_PF_DISABLE_STRIP_CRC=n
+ CONFIG_RTE_IXGBE_INC_VECTOR=y
+ CONFIG_RTE_IXGBE_RX_OLFLAGS_ENABLE=y
+ 
++#
++# Compile burst-oriented NGBE PMD driver
++#
++CONFIG_RTE_LIBRTE_NGBE_PMD=y
++CONFIG_RTE_LIBRTE_NGBE_DEBUG_RX=n
++CONFIG_RTE_LIBRTE_NGBE_DEBUG_TX=n
++CONFIG_RTE_LIBRTE_NGBE_DEBUG_TX_FREE=n
++CONFIG_RTE_NGBE_INC_VECTOR=n
++CONFIG_RTE_LIBRTE_NGBE_BYPASS=n
++CONFIG_RTE_NGBE_POLL=n
++CONFIG_RTE_NGBE_RETRY=n
++
++#
++# Compile burst-oriented TXGBE PMD driver
++#
++CONFIG_RTE_LIBRTE_TXGBE_PMD=y
++CONFIG_RTE_LIBRTE_TXGBE_DEBUG_RX=n
++CONFIG_RTE_LIBRTE_TXGBE_DEBUG_TX=n
++CONFIG_RTE_LIBRTE_TXGBE_DEBUG_TX_FREE=n
++CONFIG_RTE_TXGBE_INC_VECTOR=n
++CONFIG_RTE_LIBRTE_TXGBE_BYPASS=n
++CONFIG_RTE_TXGBE_DEBUG_BP=n
++CONFIG_RTE_TXGBE_BP_AUTO=y
++CONFIG_RTE_TXGBE_KR_POLL=n
++CONFIG_RTE_TXGBE_KR_PRESENT=n
++CONFIG_RTE_TXGBE_KX_TXRX_PIN=n
++CONFIG_RTE_TXGBE_KX_SGMII=n
++CONFIG_RTE_TXGBE_FFE_SET=n
++CONFIG_RTE_TXGBE_FFE_MAIN=0x1B1B
++CONFIG_RTE_TXGBE_FFE_PRE=0x0808
++CONFIG_RTE_TXGBE_FFE_POST=0x2C2C
++
+ #
+ # Compile burst-oriented I40E PMD driver
+ #
+diff --git a/drivers/net/Makefile b/drivers/net/Makefile
+index 3386a673a..0816d7f50 100644
+--- a/drivers/net/Makefile
++++ b/drivers/net/Makefile
+@@ -49,6 +49,7 @@ DIRS-$(CONFIG_RTE_LIBRTE_PMD_NULL) += null
+ DIRS-$(CONFIG_RTE_LIBRTE_PMD_PCAP) += pcap
+ DIRS-$(CONFIG_RTE_LIBRTE_PMD_RING) += ring
+ DIRS-$(CONFIG_RTE_LIBRTE_PMD_SZEDATA2) += szedata2
++DIRS-$(CONFIG_RTE_LIBRTE_TXGBE_PMD) += netswift
+ DIRS-$(CONFIG_RTE_LIBRTE_VIRTIO_PMD) += virtio
+ DIRS-$(CONFIG_RTE_LIBRTE_VMXNET3_PMD) += vmxnet3
+ DIRS-$(CONFIG_RTE_LIBRTE_PMD_XENVIRT) += xenvirt
+diff --git a/mk/rte.app.mk b/mk/rte.app.mk
+index c66e491d3..8c75a7ede 100644
+--- a/mk/rte.app.mk
++++ b/mk/rte.app.mk
+@@ -141,6 +141,8 @@ _LDLIBS-$(CONFIG_RTE_LIBRTE_E1000_PMD)      += -lrte_pmd_e1000
+ _LDLIBS-$(CONFIG_RTE_LIBRTE_ENA_PMD)        += -lrte_pmd_ena
+ _LDLIBS-$(CONFIG_RTE_LIBRTE_MLX4_PMD)       += -lrte_pmd_mlx4
+ _LDLIBS-$(CONFIG_RTE_LIBRTE_MLX5_PMD)       += -lrte_pmd_mlx5
++_LDLIBS-$(CONFIG_RTE_LIBRTE_NGBE_PMD)      += -lrte_pmd_ngbe
++_LDLIBS-$(CONFIG_RTE_LIBRTE_TXGBE_PMD)      += -lrte_pmd_txgbe
+ _LDLIBS-$(CONFIG_RTE_LIBRTE_NFP_PMD)        += -lrte_pmd_nfp
+ _LDLIBS-$(CONFIG_RTE_LIBRTE_PMD_SZEDATA2)   += -lrte_pmd_szedata2
+ _LDLIBS-$(CONFIG_RTE_LIBRTE_MPIPE_PMD)      += -lrte_pmd_mpipe

@@ -1,0 +1,5 @@
+#! /usr/bin/env bash
+# Generated file, modify with care
+
+cd /home/aa/ppk_sw/ppk/p4c/build
+/home/aa/ppk_sw/ppk/p4c/backends/ubpf/run-ubpf-test.py -t ubpf -c "/home/aa/ppk_sw/ppk/p4c/build/p4c-ubpf" /home/aa/ppk_sw/ppk/p4c --extern-file /home/aa/ppk_sw/ppk/p4c/testdata/extern_modules/extern-hash-ubpf.c "$@" /home/aa/ppk_sw/ppk/p4c/testdata/p4_16_samples/ubpf_hash_extern.p4

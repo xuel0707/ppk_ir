@@ -1,0 +1,79 @@
+网迅网卡DPDK驱动编译教程
+
+1.下载与解压
+	下面以dpdk-18.11为例，客户使用时可以把18.11换成自己使用的版本
+	下载DPDK版本， wget http://dpdk.org/rel/dpdk-18.11.tar.xz
+	tar -xJf  dpdk-18.11.tar.xz
+
+2.把网迅DPDK驱动补丁patch到DPDK
+	
+	注意：dpdk驱动版本号修改第二个数字，意味着要重新解压dpdk源码进行patch，例如从1.0.4 到 1.1.0
+
+	将驱动目录dpdk-pmd 和dpdk-18.11 放在同一目录，执行下面命令：
+	cp -a dpdk-pmd dpdk-18.11/drivers/net/netswift
+
+	然后进入dpdk目录：cd dpdk-18.11
+	Patch 网迅驱动补丁：patch -p1 < drivers/net/netswift/scripts/dpdk-18.11.patch
+	看patch结果是否为：
+            		config/common_base
+            		drivers/net/Makefile
+            		mk/rte.app.mk
+            20.08版本支持meson编译，另有：
+            		drivers/meson.build
+
+3. 编译
+	查看架构信息：
+		进入dpdk目录，执行make defconfig
+	make方式进行编译：	
+		make install T=x86_64-native-linuxapp-gcc
+	20.08版本及以上采用meson编译方式，需下载好meson、ninja
+	编译命令：
+		CC=gcc meson -Denable_kmods=True -Dexamples=all -Dlibdir=lib  --default-library=static x86_64-native-linuxapp-gcc
+		ninja -C x86_64-native-linuxapp-gcc -j %s
+	注：-Dexamples=all会编译所有的examples，-j后加的为cpu核数
+	
+	可能存在的位置错误：
+	1./root/dpdk/lib/librte_eal/linux/eal/eal_memory.c:29:10: 致命错误：numa.h：No such file or directory
+	安装：yum install numactl-devel*x86_64
+		If ubuntu：
+		sudo apt-get install numactl 
+		sudo apt-get install libnuma-dev
+
+	2. /lib/modules/4.18.16-300.fc29.x86_64/build: No such file or directory
+	安装：yum install  libpcap-devel
+      	If ubuntu：
+		sudo apt-get install libpcap-dev
+
+---------------以上步骤是编译操作，只需要做一次即可，后续重启设备之后不需要重复执行---------------
+
+4.设置大页内存
+	echo 4096 > /sys/kernel/mm/hugepages/hugepages-2048kB/nr_hugepages
+
+5.加载用户态驱动并绑定网卡端口
+	加载用户态驱动并将我们的卡绑到dpdk 用户态，vfio-pci 或者使用igb_uio
+	，一般vfio-pci需要开启VT，并设置iommu，若您不熟悉的话，可以百度，建议您直接使用默认的igb_uio用户态驱动，igb_uio基本所有平台都支持。
+
+	vfio-pci使用如下：
+		modprobe vfio
+		modprobe vfio-pci
+		usertools/dpdk-devbind.py --force --bind=vfio-pci 0000:07:00.0 0000:07:00.1
+
+	igb_uio 使用如下：
+		modprobe uio
+		insmod x86_64-native-linuxapp-gcc/kmod/igb_uio.ko
+		usertools/dpdk-devbind.py --force --bind=igb_uio 0000:07:00.0 0000:07:00.1
+	注：0000:07:00.0 0000:07:00.1是我们网卡在当前设备上的两个port的pci id。
+
+6.运行example程序
+	测试dpdk程序,比如helloworld：
+		cd examples/helloworld/
+		export RTE_SDK=/root/dpdk-18.11
+		export RTE_TARGET=x86_64-native-linuxapp-gcc
+
+	make后成功会出现,并能看到编译好的build目录。
+    		CC main.o
+    		LD helloworld
+    		INSTALL-APP helloworld
+   		 INSTALL-MAP helloworld.map
+		然后运行即可。
+以上教程不熟悉或者有疑问，您也可以参考DPDK官方网址https://doc.dpdk.org/guides-18.11/sample_app_ug/index.html

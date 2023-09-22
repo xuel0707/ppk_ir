@@ -1,0 +1,2 @@
+/usr/bin/ar qc libbmv2backend.a  CMakeFiles/bmv2backend.dir/unified_bmv2_backend_common_srcs_1.cpp.o CMakeFiles/bmv2backend.dir/unified_bmv2_backend_common_srcs_2.cpp.o
+/usr/bin/ranlib libbmv2backend.a

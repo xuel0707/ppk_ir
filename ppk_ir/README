@@ -1,0 +1,4 @@
+1) 所有的IR文件放在ir文件夹；
+2) 先配置DPDK，绑定网卡,详见手册；
+3) .  ./set_env.sh
+4) ./build.sh :geo_mf_ir

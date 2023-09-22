@@ -1,0 +1,85 @@
+diff --git a/config/rte_config.h b/config/rte_config.h
+index a0b5160f..48344969 100644
+--- a/config/rte_config.h
++++ b/config/rte_config.h
+@@ -131,6 +131,22 @@
+ #define RTE_LIBRTE_I40E_QUEUE_NUM_PER_VF 4
+ #define RTE_LIBRTE_I40E_QUEUE_NUM_PER_VM 4
+
++/* txgbe defines */
++#undef RTE_TXGBE_DEBUG_BP
++#define RTE_TXGBE_BP_AUTO 1
++#undef RTE_TXGBE_KR_POLL
++#undef RTE_TXGBE_KR_PRESENT
++#undef RTE_TXGBE_KX_TXRX_PIN
++#undef RTE_TXGBE_KX_SGMII
++#undef RTE_TXGBE_FFE_SET
++#define RTE_TXGBE_FFE_MAIN 0x1B1B
++#define RTE_TXGBE_FFE_PRE 0x0808
++#define RTE_TXGBE_FFE_POST 0x2C2C
++
++/* ngbe defines */
++#undef RTE_NGBE_POLL
++#undef RTE_NGBE_RETRY
++
+ /* Ring net PMD settings */
+ #define RTE_PMD_RING_MAX_RX_RINGS 16
+ #define RTE_PMD_RING_MAX_TX_RINGS 16
+diff --git a/drivers/meson.build b/drivers/meson.build
+index f9febc57..4445a6f8 100644
+--- a/drivers/meson.build
++++ b/drivers/meson.build
+@@ -9,6 +9,7 @@ subdirs = [
+ 	'common/qat', # depends on bus.
+ 	'mempool', # depends on common and bus.
+ 	'net',     # depends on common, bus, mempool
++	'net/netswift', # depends on bus.
+ 	'raw',     # depends on common, bus and net.
+ 	'crypto',  # depends on common, bus and mempool (net in future).
+ 	'compress', # depends on common, bus, mempool.
+@@ -31,14 +32,21 @@ endif
+ 
+ foreach subpath:subdirs
+ 	drivers = []
++	versions = []
+ 	std_deps = []
+ 	config_flag_fmt = '' # format string used to set the value in dpdk_conf
++	vender = ''
+ 
+ 	# subpath can be either "class" or "class/driver"
+ 	if subpath.contains('/')
+ 		driver_path = subpath.split('/')
+ 		class = driver_path[0]
+ 		drivers += driver_path[1]
++		if drivers[0] == 'netswift'
++			vender = drivers[0]
++			drivers = []
++			subdir(subpath)
++		endif
+ 	else
+ 		class = subpath
+ 		subdir(class)
+@@ -53,6 +61,11 @@ foreach subpath:subdirs
+ 
+ 	foreach drv:drivers
+ 		drv_path = join_paths(class, drv)
++		if vender != ''
++			drv_path = join_paths(class, vender, drv, versions[drv])
++		else
++			drv_path = join_paths(class, drv)
++		endif
+ 
+ 		# set up empty variables used for build
+ 		build = true # set to false to disable, e.g. missing deps
+diff --git a/drivers/net/meson.build b/drivers/net/meson.build
+index 29f47775..4e4c2c97 100644
+--- a/drivers/net/meson.build
++++ b/drivers/net/meson.build
+@@ -50,7 +50,6 @@ drivers = ['af_packet',
+ 	'szedata2',
+ 	'tap',
+ 	'thunderx',
+-	'txgbe',
+ 	'vdev_netvsc',
+ 	'vhost',
+ 	'virtio',

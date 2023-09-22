@@ -1,0 +1,165 @@
+1.How to merge txgbe to official dpdk tree
+wget http://dpdk.org/rel/dpdk-VERSION.tar.xz
+tar -xJf dpdk-VERSION.tar.xz
+cp -a dpdk-pmd dpdk-VERSION/drivers/net/netswift
+cd dpdk-VERSION
+patch -p1 < drivers/net/netswift/scripts/dpdk-VERSION.patch
+
+2.patched file list
+config/common_base
+drivers/net/Makefile
+mk/rte.app.mk
+
+3.About dpdk-VERSION
+legacy: version 16.04 includes 16.04~17.08
+maintenance: version 17.11 includes 17.11~18.08
+			 version 18.11 includes 18.11~19.08
+development: 19.11~20.11
+
+4.Special 20.11
+rm -rf dpdk-20.11/drivers/net/txgbe
+patched file list: config/rte_config.h
+				   drivers/meson.build
+				   drivers/net/meson.build
+
+******* Release notes *******
+
+**** version 1.1.0 ****
+
+2022.3.29
+  - EM: change pci mbox to rte ops, delete other mbox except dev init
+  - EM: fix to power up for marvell phy
+2022.3.28
+  - EM: fix extended statistics
+2022.3.25
+  - EM: add macro config switch for AN retry
+2022.3.3
+  - EM: add AN retry when AN error bit occurs
+  - EM: move reading flash to HW init
+  - convert source files to unix format
+2022.3.2
+  - EM: read efuse from flash
+  - EM: protect PHY init from check_link
+2022.3.1
+  - EM: add yt8531 support
+2022.1.27
+  - SP: fix KR always be force mode on some firmware version
+2022.1.21
+  - EM: fix force speed setting
+  - EM: remove FW semaphore bit clear
+
+**** version 1.0.4 ****
+
+2022.1.17
+  - EM: remove efuse configuration
+  - EM: set DEBUGOUT log level to be debug
+2022.1.14
+  - fix compile warning
+2022.1.5
+  - EM: fix to get firmware version
+  - EM: fix PHY init flow
+  - EM: fix to read and write pcie bus master
+2022.1.4
+  - EM: add LED OEM control
+  - EM: add sub device IDs and PHY types
+2021.12.30
+  - fix compile error in 20.05~20.11 for txgbe
+2021.12.3
+  - fix compile error in 16.04~17.08
+2021.11.26
+  - fix to set mtu
+2021.11.23
+  - support LED OEM flow for txgbe
+2021.11.18
+  - support to set link up/down for txgbe
+2021.10.26
+  - fix specific length packet statistics
+  - set KR present value default to 0 for txgbe
+
+**** version 1.0.3 ****
+
+2021.10.11
+  - fix to disable TX queues completely for ngbe
+2021.9.29
+  - fix PHY interrupt sometimes lost for ngbe
+2021.9.28
+  - fix compile error for txgbe
+  - support to set pcie master for ngbe
+2021.9.27
+  - fix VXLAN-GPE with header in inner L2, and parse it in legacy versions
+
+**** version 1.0.2 ****
+
+2021.8.26
+  - fix compile warning for txgbe
+2021.8.25
+  - fix legacy interrupt for txgbe
+2021.8.3
+  - fix fdir TCP/UDP port mask
+2021.8.2
+  - fix link status for txgbevf
+  - add intertal YT8521 PHY for ngbe
+2021.7.29
+  - add polling mode to link up for YT8521 PHY
+2021.7.28
+  - fix link status when device stopped for txgbe
+2021.7.22
+  - fix I2C read issues
+2021.7.13
+  - fix to set vlan on vf
+
+**** version 1.0.1 ****
+
+2021.6.18
+  - fix speed_capa in dev_info for ngbe
+2021.6.9
+  - add force-speed mode for ngbe
+2021.5.20
+  - fix dev_info get in some versions
+2021.5.12
+  - fix compile error in txgbe 16.04~18.08
+2021.4.28
+  - fix vxlan-gpe in txgbe
+2021.4.16
+  - fix fdir mask in txgbe
+2021.4.14
+  - fix 19.11 patch failed in 19.11.2
+2021.4.13
+  - support meson build in 19.11
+  - fix 20.02 compile error
+2021.4.12
+  - fix txgbe 18.11 compile error
+2021.4.8
+  - disable BP log as default
+  - fix vf mtu limit setting
+2021.4.4
+  - fix fw get error
+2021.3.25
+  - fix to get fw version for txgbe
+2021.3.23
+  - fix to support ngbe vf
+  - fix double vlan config mask
+2021.3.15
+  - fix vf promisc disable in *~19.08
+2021.3.11
+  - fix rss in double vlan
+2021.3.10
+  - fix all tx dropped since KR support
+2021.3.4
+  - fix IPsec for txgbe
+  - fix compile in arm neon
+2021.3.1
+  - update ngbe device id (0x0109~0x010B)
+2021.2.19
+  - add KR/KX4/KX support to txgbe
+2021.1.25
+  - fix vec sse to parse packet type
+  - fix to set mc addr list for VF
+  - fix rx packet missed counter
+2021.1.8
+  - add txgbe and ngbe support to 20.11
+  - fix 20.08 patch script
+2020.12.28
+  - fix ngbe 20.02 compile error
+2020.12.23
+  - update packet type in txgbe and ngbe

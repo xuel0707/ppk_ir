@@ -1,0 +1,2 @@
+/usr/bin/ar qc libir.a  CMakeFiles/ir.dir/unified_ir_srcs_1.cpp.o CMakeFiles/ir.dir/unified_ir_srcs_2.cpp.o
+/usr/bin/ranlib libir.a

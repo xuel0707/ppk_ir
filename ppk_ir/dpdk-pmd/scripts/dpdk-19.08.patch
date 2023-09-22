@@ -1,0 +1,68 @@
+diff --git a/config/common_base b/config/common_base
+index 8ef75c203..b26f939ea 100644
+--- a/config/common_base
++++ b/config/common_base
+@@ -292,6 +292,38 @@ CONFIG_RTE_LIBRTE_IXGBE_PF_DISABLE_STRIP_CRC=n
+ CONFIG_RTE_IXGBE_INC_VECTOR=y
+ CONFIG_RTE_LIBRTE_IXGBE_BYPASS=n
+ 
++#
++# Compile burst-oriented NGBE PMD driver
++#
++CONFIG_RTE_LIBRTE_NGBE_PMD=y
++CONFIG_RTE_LIBRTE_NGBE_DEBUG_RX=n
++CONFIG_RTE_LIBRTE_NGBE_DEBUG_TX=n
++CONFIG_RTE_LIBRTE_NGBE_DEBUG_TX_FREE=n
++CONFIG_RTE_NGBE_INC_VECTOR=n
++CONFIG_RTE_LIBRTE_NGBE_BYPASS=n
++CONFIG_RTE_NGBE_POLL=n
++CONFIG_RTE_NGBE_RETRY=n
++
++#
++# Compile burst-oriented TXGBE PMD driver
++#
++CONFIG_RTE_LIBRTE_TXGBE_PMD=y
++CONFIG_RTE_LIBRTE_TXGBE_DEBUG_RX=n
++CONFIG_RTE_LIBRTE_TXGBE_DEBUG_TX=n
++CONFIG_RTE_LIBRTE_TXGBE_DEBUG_TX_FREE=n
++CONFIG_RTE_TXGBE_INC_VECTOR=n
++CONFIG_RTE_LIBRTE_TXGBE_BYPASS=n
++CONFIG_RTE_TXGBE_DEBUG_BP=n
++CONFIG_RTE_TXGBE_BP_AUTO=y
++CONFIG_RTE_TXGBE_KR_POLL=n
++CONFIG_RTE_TXGBE_KR_PRESENT=n
++CONFIG_RTE_TXGBE_KX_TXRX_PIN=n
++CONFIG_RTE_TXGBE_KX_SGMII=n
++CONFIG_RTE_TXGBE_FFE_SET=n
++CONFIG_RTE_TXGBE_FFE_MAIN=0x1B1B
++CONFIG_RTE_TXGBE_FFE_PRE=0x0808
++CONFIG_RTE_TXGBE_FFE_POST=0x2C2C
++
+ #
+ # Compile burst-oriented I40E PMD driver
+ #
+diff --git a/drivers/net/Makefile b/drivers/net/Makefile
+index 5767fdf65..1ffa56703 100644
+--- a/drivers/net/Makefile
++++ b/drivers/net/Makefile
+@@ -35,6 +35,7 @@ DIRS-$(CONFIG_RTE_LIBRTE_IAVF_PMD) += iavf
+ DIRS-$(CONFIG_RTE_LIBRTE_ICE_PMD) += ice
+ DIRS-$(CONFIG_RTE_LIBRTE_IPN3KE_PMD) += ipn3ke
+ DIRS-$(CONFIG_RTE_LIBRTE_IXGBE_PMD) += ixgbe
++DIRS-$(CONFIG_RTE_LIBRTE_TXGBE_PMD) += netswift
+ DIRS-$(CONFIG_RTE_LIBRTE_LIO_PMD) += liquidio
+ DIRS-$(CONFIG_RTE_LIBRTE_PMD_MEMIF) += memif
+ DIRS-$(CONFIG_RTE_LIBRTE_MLX4_PMD) += mlx4
+diff --git a/mk/rte.app.mk b/mk/rte.app.mk
+index ba5c39e01..42b642298 100644
+--- a/mk/rte.app.mk
++++ b/mk/rte.app.mk
+@@ -176,6 +176,8 @@ _LDLIBS-$(CONFIG_RTE_LIBRTE_I40E_PMD)       += -lrte_pmd_i40e
+ _LDLIBS-$(CONFIG_RTE_LIBRTE_IAVF_PMD)       += -lrte_pmd_iavf
+ _LDLIBS-$(CONFIG_RTE_LIBRTE_ICE_PMD)        += -lrte_pmd_ice
+ _LDLIBS-$(CONFIG_RTE_LIBRTE_IXGBE_PMD)      += -lrte_pmd_ixgbe
++_LDLIBS-$(CONFIG_RTE_LIBRTE_NGBE_PMD)      += -lrte_pmd_ngbe
++_LDLIBS-$(CONFIG_RTE_LIBRTE_TXGBE_PMD)      += -lrte_pmd_txgbe
+ ifeq ($(CONFIG_RTE_LIBRTE_KNI),y)
+ _LDLIBS-$(CONFIG_RTE_LIBRTE_PMD_KNI)        += -lrte_pmd_kni
+ endif
